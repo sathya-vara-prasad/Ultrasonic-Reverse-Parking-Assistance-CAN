@@ -22,17 +22,18 @@ buzzer/LED alert based on the received zone value.
 ---
 
 ## System Architecture
-┌─────────────────────┐ CAN Bus ┌─────────────────────┐
-│ NODE A │◄────────────────────────►│ NODE B │
-│ (Master/Alert) │ │ (Sensor/Responder) │
-│ │ 1. Sends Remote Frame │ │
-│ - Buzzer │ ─────────────────────────►│ - HC-SR04 Sensor │
-│ - LED Indicators │ │ - get_range() │
-│ - UART Debug │ 2. Receives Data Frame │ - UART Debug │
-│ │◄─────────────────────────-│ │
-└─────────────────────┘ └─────────────────────┘
-CAN ID: 0x123 CAN ID: 0x456
 
+| Step | Direction        | Frame Type   | CAN ID  | Payload         |
+|:----:|:-----------------|:-------------|:-------:|:----------------|
+| 1    | Node A → Node B  | Remote Frame | `0x123` | RTR=1, DLC=1    |
+| 2    | Node B → Node A  | Data Frame   | `0x456` | Zone byte (1B)  |
+
+### Node Roles
+
+| Node   | Role              | Peripherals Used                  |
+|:-------|:------------------|:----------------------------------|
+| Node A | Master / Alerter  | CAN2, UART0, Buzzer, LEDs         |
+| Node B | Sensor / Responder| CAN2, UART0, HC-SR04 (Timer/GPIO) |
 ---
 
 ## Features
